@@ -9,10 +9,6 @@ I am LittleAcbg, and currently I'm not willing to write my name down to the publ
 You may contact me on:
 
 - Luogu @[LittleAcbg](https://www.luogu.com.cn/user/531709)
-- Codeforces @[Luojingjia](https://codeforces.com/profile/Luojingjia)
-- AtCoder @[Luojingjia](https://atcoder.jp/users/Luojingjia)
-- QOJ @[LittleAcbg](https://qoj.ac/user/profile/LittleAcbg)
-- UOJ @[LittleAcbg](https://uoj.ac/user/profile/LittleAcbg)
 - Discord @LittleAcbg
 - Mail [sh_ljj2012@163.com](mailto:sh_ljj2012@163.com)
 
