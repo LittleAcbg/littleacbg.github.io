@@ -90,8 +90,7 @@
 
 <title>Project-xjp</title>
 
-<h1>Codeforces</h1>
-<h2>Contest mode</h2>
+<h1>Codeforces</h1><h2>Contest mode</h2><a href="index.html">Return to home</a><br><br>
 
 Division ((20,20),(15,15),(10,10)): <input type="number" min="0" max="3" step="1" id="get_div" placeholder="请输入 0-3 的整数">
 <br>Seed: <input type="text" id="get_str" placeholder="请输入一个字符串">
@@ -147,7 +146,7 @@ class MT19937 {
 }
 var n,m,k,pl = 1,pr = [],pc = [],qr = [],qc = [],pw = [],ok = [],fail = [],c1 = [],c2 = [],ti,sum = 0,score = 100;
 function finish() {
-    document.body.innerHTML = "<h1>Codeforces</h1><h2>Contest mode</h2>Time's Up!<br><br>Final score: " + sum.toString();
+    document.body.innerHTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Time's Up!<br><br>Final score: " + sum.toString();
 }
 function WA() {
     if (ok[pl]) return;
@@ -173,7 +172,7 @@ function refresh() {
     score -= (ti2 - ti) * 0.0001;
     if (score <= 30) finish();
     ti = ti2;
-    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"finish()\">Quit</button><br><br>";
+    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"finish()\">Quit</button><br><br>";
     for (let i = 1; i <= k; ++i) {
         if (i != pl)
             if (ok[i]) HTML += "<button class=\"ac\" onclick=";
