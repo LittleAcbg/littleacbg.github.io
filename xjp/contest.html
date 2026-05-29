@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<style>
+@font-face {
+    font-family: 'UbuntuMono';
+    src: url('https://fonts.gstatic.com/s/ubuntumono/v12/KFOjCneDtsqEr0keqCMhbCdh7f_3ng.woff2') format('woff2'),
+         url('https://fonts.gstatic.com/s/ubuntumono/v12/KFOjCneDtsqEr0keqCMhbCdh7f83ng.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.xjp {
+    font-family: 'UbuntuMono';
+    padding: 3px 5px;
+    border: 1px solid black;
+    border-radius: 10%;
+}
+.xjp:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.xjpac {
+    font-family: 'UbuntuMono';
+    border: 1px solid green;
+    background-color: lightgreen;
+    padding: 3px 5px;
+    border-radius: 10%;
+}
+.xjpwa {
+    font-family: 'UbuntuMono';
+    border: 1px solid darkred;
+    background-color: red;
+    padding: 3px 5px;
+    border-radius: 10%;
+}
+.norm {
+    font-family: 'UbuntuMono', monospace;
+    padding: 5px 9px;
+    border: 1px solid black;
+    border-radius: 10%;
+}
+.norm:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.ac {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid green;
+    background-color: lightgreen;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.ac:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.wa {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid darkred;
+    background-color: red;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.wa:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.cur {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: skyblue;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.curac {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: lightgreen;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.curwa {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: red;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+</style>
+
+<title>Project-xjp</title>
+
+<h1>Codeforces</h1>
+<h2>Contest mode</h2>
+
+Division ((20,20),(15,15),(10,10)): <input type="number" min="0" max="3" step="1" id="get_div" placeholder="请输入 0-3 的整数">
+<br>Seed: <input type="text" id="get_str" placeholder="请输入一个字符串">
+<br>自定义题目：<br><textarea rows="10" cols="50" placeholder="请输入题目，每行两个字符串" id="settings">
+农 衣
+习 匀
+习 刁
+洗 冼
+谌 湛
+璧 壁
+平 乎</textarea><br>
+<button onclick="shuffle()">START</button>
+
+<script>
+function _int32(x) {
+    return x >>> 0;  // 无符号右移0位，转换为32位无符号整数
+}
+class MT19937 {
+    constructor(seed) {
+        this.mt = new Array(624);
+        this.index = 624;  // 初始化为624，强制第一次调用时twist
+        this.mt[0] = seed >>> 0;
+        for (let i = 1; i < 624; i++) {
+            this.mt[i] = _int32(1812433253 * (this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)) + i);
+        }
+    }
+
+    extract_number() {
+        if (this.index >= 624) {
+            this.twist();
+            this.index = 0;
+        }
+
+        let y = this.mt[this.index];
+        y = y ^ (y >>> 11);
+        y = y ^ ((y << 7) & 2636928640);
+        y = y ^ ((y << 15) & 4022730752);
+        y = y ^ (y >>> 18);
+
+        this.index++;
+        return _int32(y);
+    }
+
+    twist() {
+        for (let i = 0; i < 624; i++) {
+            let y = _int32((this.mt[i] & 0x80000000) + (this.mt[(i + 1) % 624] & 0x7fffffff));
+            this.mt[i] = this.mt[(i + 397) % 624] ^ (y >>> 1);
+            if (y % 2 !== 0) {
+            this.mt[i] = this.mt[i] ^ 0x9908b0df;
+            }
+        }
+    }
+}
+var n,m,k,pl = 1,pr = [],pc = [],qr = [],qc = [],pw = [],ok = [],fail = [],c1 = [],c2 = [],ti,sum = 0,score = 100;
+function finish() {
+    document.body.innerHTML = "<h1>Codeforces</h1><h2>Contest mode</h2>Time's Up!<br><br>Final score: " + sum.toString();
+}
+function WA() {
+    if (ok[pl]) return;
+    let ti2 = Date.now();
+    score -= (ti2 - ti) * 0.0001;
+    ti = ti2;
+    if (score <= 30) finish();
+    fail[pl] = true;
+    refresh();
+}
+function AC() {
+    if (fail[pl]) return;
+    let ti2 = Date.now();
+    score -= (ti2 - ti) * 0.0001;
+    if (score <= 30) finish();
+    sum += score;
+    ti = ti2;
+    ok[pl] = true;
+    refresh();
+}
+function refresh() {
+    let ti2 = Date.now();
+    score -= (ti2 - ti) * 0.0001;
+    if (score <= 30) finish();
+    ti = ti2;
+    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"finish()\">Quit</button><br><br>";
+    for (let i = 1; i <= k; ++i) {
+        if (i != pl)
+            if (ok[i]) HTML += "<button class=\"ac\" onclick=";
+            else if (fail[i]) HTML += "<button class=\"wa\" onclick=";
+            else HTML += "<button class=\"norm\" onclick=";
+        else
+            if (ok[i]) HTML += "<button class=\"curac\" onclick=";
+            else if (fail[i]) HTML += "<button class=\"curwa\" onclick=";
+            else HTML += "<button class=\"cur\" onclick=";
+        if (i == 1) HTML += "\"pl=1,refresh()\">A</button>";
+        else if (i == 2) HTML += "\"pl=2,refresh()\">B</button>";
+        else if (i == 3) HTML += "\"pl=3,refresh()\">C</button>";
+        else if (i == 4) HTML += "\"pl=4,refresh()\">D</button>";
+        else if (i == 5) HTML += "\"pl=5,refresh()\">E</button>";
+        else if (i == 6) HTML += "\"pl=6,refresh()\">F</button>";
+        else if (i == 7) HTML += "\"pl=7,refresh()\">G</button>";
+        else if (i == 8) HTML += "\"pl=8,refresh()\">H</button>";
+        else if (i == 9) HTML += "\"pl=9,refresh()\">I</button>";
+        else if (i == 10) HTML += "\"pl=10,refresh()\">J</button>";
+        else if (i == 11) HTML += "\"pl=11,refresh()\">K</button>";
+        else if (i == 12) HTML += "\"pl=12,refresh()\">L</button>";
+        else if (i == 13) HTML += "\"pl=13,refresh()\">M</button>";
+        else if (i == 14) HTML += "\"pl=14,refresh()\">N</button>";
+        else if (i == 15) HTML += "\"pl=15,refresh()\">O</button>";
+    }
+    HTML += "<br><br>";
+    for (let i = 1; i <= n; ++i)
+    {
+        for (let j = 1; j <= m; ++j)
+            if (i == pr[pl] && j == pc[pl] && ok[pl]) HTML += "<button onclick=\"AC()\" class=\"xjpac\">" + c2[pw[pl]] + "</button>";
+            else if (i == pr[pl] && j == pc[pl] && fail[pl]) HTML += "<button onclick=\"AC()\" class=\"xjpwa\">" + c2[pw[pl]] + "</button>";
+            else if (i == pr[pl] && j == pc[pl]) HTML += "<button onclick=\"AC()\" class=\"xjp\">" + c2[pw[pl]] + "</button>";
+            else HTML += "<button onclick=\"WA()\" class=\"xjp\">" + c1[pw[pl]] + "</button>";
+        HTML += "<br>";
+    }
+
+    document.body.innerHTML = HTML;
+}
+function shuffle() {
+    let div = document.getElementById('get_div').valueAsNumber, str = document.getElementById('get_str').value, seed = 0, mod = 998244353;
+    for (let i = 0; i < str.length; i++) {
+        seed = (seed * 131 + str.charCodeAt(i)) % mod;
+    }
+    const rng = new MT19937(seed);
+
+    let num = 0, settings = document.getElementById('settings').value + "\n", a = "", b = "", toB = 0;
+    for (let i = 0; i < settings.length; i++)
+    {
+        let c = settings.charAt(i);
+        if (c == ' ' || c == '\n' || c == '\r') {
+            if (a != "" && b != "") {
+                ++num;
+                c1[num] = a;
+                c2[num] = b;
+                ++num;
+                c1[num] = b;
+                c2[num] = a;
+                a = b = "";
+                toB = false;
+            }
+            else if (a != "") toB = true;
+        }
+        else if (toB) b += c;
+        else a += c;
+    }
+
+    console.log(c1);
+
+    if (div == 0) n = m = 30,k = 15;
+    else if (div == 1) n = m = 20,k = 12;
+    else if (div == 2) n = m = 15,k = 10;
+    else n = m = 10,k = 6;
+
+    for (let i = 1; i <= k; ++i)
+    {
+        pr[i] = rng.extract_number() % n + 1;
+        pc[i] = rng.extract_number() % m + 1;
+        pw[i] = rng.extract_number() % num + 1;
+    }
+
+    ti = Date.now();
+
+    refresh();
+}
+</script>
+
+</html>
