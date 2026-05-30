@@ -102,6 +102,8 @@ Division ((20,20),(15,15),(10,10)): <input type="number" min="0" max="3" step="1
 谌 湛
 璧 壁
 平 乎</textarea><br>
+或上传文件：
+<input type="file" id="settingsfile">
 <button onclick="shuffle()">START</button>
 
 <script>
@@ -182,21 +184,7 @@ function refresh() {
             if (ok[i]) HTML += "<button class=\"curac\" onclick=";
             else if (fail[i]) HTML += "<button class=\"curwa\" onclick=";
             else HTML += "<button class=\"cur\" onclick=";
-        if (i == 1) HTML += "\"pl=1,refresh()\">A</button>";
-        else if (i == 2) HTML += "\"pl=2,refresh()\">B</button>";
-        else if (i == 3) HTML += "\"pl=3,refresh()\">C</button>";
-        else if (i == 4) HTML += "\"pl=4,refresh()\">D</button>";
-        else if (i == 5) HTML += "\"pl=5,refresh()\">E</button>";
-        else if (i == 6) HTML += "\"pl=6,refresh()\">F</button>";
-        else if (i == 7) HTML += "\"pl=7,refresh()\">G</button>";
-        else if (i == 8) HTML += "\"pl=8,refresh()\">H</button>";
-        else if (i == 9) HTML += "\"pl=9,refresh()\">I</button>";
-        else if (i == 10) HTML += "\"pl=10,refresh()\">J</button>";
-        else if (i == 11) HTML += "\"pl=11,refresh()\">K</button>";
-        else if (i == 12) HTML += "\"pl=12,refresh()\">L</button>";
-        else if (i == 13) HTML += "\"pl=13,refresh()\">M</button>";
-        else if (i == 14) HTML += "\"pl=14,refresh()\">N</button>";
-        else if (i == 15) HTML += "\"pl=15,refresh()\">O</button>";
+        HTML += "\"pl=" + i.toString() + ",refresh()\">" + String.fromCharCode(64 + i) + "</button>";
     }
     HTML += "<br><br>";
     for (let i = 1; i <= n; ++i)
@@ -211,6 +199,17 @@ function refresh() {
 
     document.body.innerHTML = HTML;
 }
+var settings = "";
+document.getElementById('settingsfile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            settings = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+});
 function shuffle() {
     let div = document.getElementById('get_div').valueAsNumber, str = document.getElementById('get_str').value, seed = 0, mod = 998244353;
     for (let i = 0; i < str.length; i++) {
@@ -218,7 +217,9 @@ function shuffle() {
     }
     const rng = new MT19937(seed);
 
-    let num = 0, settings = document.getElementById('settings').value + "\n", a = "", b = "", toB = 0;
+    let num = 0, a = "", b = "", toB = 0;
+    if (settings == "") settings = document.getElementById('settings').value;
+    settings += "\n";
     for (let i = 0; i < settings.length; i++)
     {
         let c = settings.charAt(i);
