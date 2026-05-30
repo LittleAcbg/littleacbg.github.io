@@ -169,12 +169,22 @@ function AC() {
     ok[pl] = true;
     refresh();
 }
+function resume() {
+    ti = Date.now();
+    refresh();
+}
+function pause() {
+    let ti2 = Date.now();
+    score -= (ti2 - ti) * 0.0001;
+    if (score <= 30) finish();
+    document.body.innerHTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Timer is paused. <button onclick=\"resume()\">Resume</button>";
+}
 function refresh() {
     let ti2 = Date.now();
     score -= (ti2 - ti) * 0.0001;
     if (score <= 30) finish();
     ti = ti2;
-    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"finish()\">Quit</button><br><br>";
+    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"pause()\">Pause</button> <button onclick=\"finish()\">Quit</button><br><br>";
     for (let i = 1; i <= k; ++i) {
         if (i != pl)
             if (ok[i]) HTML += "<button class=\"ac\" onclick=";
