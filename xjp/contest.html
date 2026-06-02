@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+<title>Project-xjp</title>
 
 <style>
 @font-face {
@@ -88,11 +89,9 @@
 }
 </style>
 
-<title>Project-xjp</title>
-
 <h1>Codeforces</h1><h2>Contest mode</h2><a href="index.html">Return to home</a><br><br>
 
-Division ((20,20),(15,15),(10,10)): <input type="number" min="0" max="3" step="1" id="get_div" placeholder="请输入 0-3 的整数">
+Division ((20,20,12),(15,15,10),(10,10,6)): <input type="number" min="0" max="3" step="1" id="get_div" placeholder="请输入 0-3 的整数">
 <br>Seed: <input type="text" id="get_str" placeholder="请输入一个字符串">
 <br>自定义题目：<br><textarea rows="10" cols="50" placeholder="请输入题目，每行两个字符串" id="settings">
 农 衣
@@ -146,12 +145,36 @@ class MT19937 {
         }
     }
 }
-var n,m,k,pl = 1,pr = [],pc = [],qr = [],qc = [],pw = [],ok = [],fail = [],c1 = [],c2 = [],ti,sum = 0,score = 100;
+var n,m,k,pl = 1,pr = [],pc = [],pw = [],ok = [],fail = [],c1 = [],c2 = [],ti,sum = 0,score = 100;
 function finish() {
-    document.body.innerHTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Time's Up!<br><br>Final score: " + sum.toString();
+    for (let i = 1; i <= k; ++i) if (ok[i] != true) fail[i] = true;
+    score = 30;
+    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Time's Up! <a href = \"contest.html\"><button>Restart</button></a><br>Final score: " + sum.toFixed(3).toString() + "<br><br>";
+    for (let i = 1; i <= k; ++i) {
+        if (i != pl)
+            if (ok[i]) HTML += "<button class=\"ac\" onclick=";
+            else if (fail[i]) HTML += "<button class=\"wa\" onclick=";
+            else HTML += "<button class=\"norm\" onclick=";
+        else
+            if (ok[i]) HTML += "<button class=\"curac\" onclick=";
+            else if (fail[i]) HTML += "<button class=\"curwa\" onclick=";
+            else HTML += "<button class=\"cur\" onclick=";
+        HTML += "\"pl=" + i.toString() + ",finish()\">" + String.fromCharCode(64 + i) + "</button>";
+    }
+    HTML += "<br><br>";
+    for (let i = 1; i <= n; ++i)
+    {
+        for (let j = 1; j <= m; ++j)
+            if (i == pr[pl] && j == pc[pl] && ok[pl]) HTML += "<button onclick=\"AC()\" class=\"xjpac\">" + c2[pw[pl]] + "</button>";
+            else if (i == pr[pl] && j == pc[pl] && fail[pl]) HTML += "<button onclick=\"AC()\" class=\"xjpwa\">" + c2[pw[pl]] + "</button>";
+            else if (i == pr[pl] && j == pc[pl]) HTML += "<button onclick=\"AC()\" class=\"xjp\">" + c2[pw[pl]] + "</button>";
+            else HTML += "<button onclick=\"WA()\" class=\"xjp\">" + c1[pw[pl]] + "</button>";
+        HTML += "<br>";
+    }
+    document.body.innerHTML = HTML;
 }
 function WA() {
-    if (ok[pl]) return;
+    if (fail[pl] || ok[pl]) return;
     let ti2 = Date.now();
     score -= (ti2 - ti) * 0.0001;
     ti = ti2;
@@ -160,7 +183,7 @@ function WA() {
     refresh();
 }
 function AC() {
-    if (fail[pl]) return;
+    if (fail[pl] || ok[pl]) return;
     let ti2 = Date.now();
     score -= (ti2 - ti) * 0.0001;
     if (score <= 30) finish();
@@ -184,7 +207,7 @@ function refresh() {
     score -= (ti2 - ti) * 0.0001;
     if (score <= 30) finish();
     ti = ti2;
-    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Current score: " + sum.toString() + "; Base pt " + score.toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"pause()\">Pause</button> <button onclick=\"finish()\">Quit</button><br><br>";
+    let HTML = "<h1>Codeforces</h1><h2>Contest mode</h2><a href=\"index.html\">Return to home</a><br><br>Current score: " + sum.toFixed(3).toString() + "; Base pt " + score.toFixed(3).toString() + " <button onclick=\"refresh()\">Refresh</button> <button onclick=\"pause()\">Pause</button> <button onclick=\"finish()\">Quit</button><br><br>";
     for (let i = 1; i <= k; ++i) {
         if (i != pl)
             if (ok[i]) HTML += "<button class=\"ac\" onclick=";
