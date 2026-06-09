@@ -1,0 +1,84 @@
+@font-face {
+    font-family: 'UbuntuMono';
+    src: url('https://fonts.gstatic.com/s/ubuntumono/v12/KFOjCneDtsqEr0keqCMhbCdh7f_3ng.woff2') format('woff2'),
+         url('https://fonts.gstatic.com/s/ubuntumono/v12/KFOjCneDtsqEr0keqCMhbCdh7f83ng.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.xjp {
+    font-family: 'UbuntuMono', monospace;
+    padding: 3px 5px;
+    border: 1px solid black;
+    border-radius: 10%;
+}
+.xjp:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.xjpac {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid green;
+    background-color: lightgreen;
+    padding: 3px 5px;
+    border-radius: 10%;
+}
+.xjpwa {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid darkred;
+    background-color: red;
+    padding: 3px 5px;
+    border-radius: 10%;
+}
+.norm {
+    font-family: 'UbuntuMono', monospace;
+    padding: 5px 9px;
+    border: 1px solid black;
+    border-radius: 10%;
+}
+.norm:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.ac {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid green;
+    background-color: lightgreen;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.ac:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.wa {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid darkred;
+    background-color: red;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.wa:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.cur {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: skyblue;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.curac {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: lightgreen;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
+.curwa {
+    font-family: 'UbuntuMono', monospace;
+    border: 1px solid blue;
+    background-color: red;
+    padding: 5px 9px;
+    border-radius: 10%;
+}
