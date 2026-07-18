@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YKH Chaos incremental v0.0.1</title>
+<link rel="stylesheet" href="copymodal.css">
+<style>
+    body {
+        font-family: 'Consolas';
+    }
+    button {
+        font-family: 'Consolas';
+        padding: 0 2px 0;
+        cursor: pointer;
+    }
+    textarea {
+        font-family: 'Consolas';
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        background-color: #f0f5fa;
+        padding: 20px;
+    }
+    .tab-bar {
+        display: flex;
+        align-items: center;
+        padding: 10px 10px 0;
+        background-color: #ffffff;
+    }
+    .tab-btn {
+        background: none;
+        border: none;
+        padding: 0 10px 10px;
+        cursor: pointer;
+        position: relative;
+        color: #333333;
+        transition: all 0.2s ease;
+        font-size: large;
+        font-weight: bold;
+    }
+    .tab-btn:hover {
+        color: #999999;
+    }
+    .tab-btn:hover::after {
+        transition: 0.2s;
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background-color: #aaaaaa;
+    }
+    .tab-btn.active {
+        color: #2196f3;
+    }
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background-color: #2196f3;
+    }
+    .tab {
+        width: 100%;
+        height: 1000px;
+        display: none;
+        margin-top: 20px;
+        padding: 10px 10px 0;
+        border: none;
+        background-color: #ffffff;
+    }
+    .upgrade {
+        padding: 4px 4px;
+        border-radius: 3px;
+        border: 1px solid #b84b5f;
+        background-color: #828282;
+        cursor: default;
+    }
+    .upgrade:hover {
+        background-color: #b84b5f;
+    }
+    .okupgrade {
+        padding: 4px 4px;
+        border-radius: 3px;
+        border: 1px solid #00a000;
+        background-color: white;
+    }
+    .okupgrade:hover {
+        background-color: #00c000;
+    }
+    .boughtupgrade {
+        padding: 4px 4px;
+        border-radius: 3px;
+        border: 1px solid green;
+        background-color: #00b000;
+        cursor: default;
+    }
+    .boughtupgrade:hover {
+        background-color: green;
+    }
+</style>
+</head>
+
+
+<body onload="init()">
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="showFrame('chaos-tab', this)">Chaos</button>&ensp;
+        <button class="tab-btn" onclick="showFrame('statistics-tab', this)">Statistics</button>
+    </div>
+
+    <div id="chaos-tab" class="tab" style="display: block;">
+    <h1>Stable Zone</h1><br>
+    <span style="color: green; font-weight: bold;">Tidiness</span>: 0.000 <button onclick="GainTidiness()">Gain</button>
+    <br><br><span style="color: limegreen; font-weight: bold;">Stability</span>: 0.000
+    <br><br><button class="upgrade"><b>Stable multiplier</b><br><span style="font-size: smaller;">×2 to Stability gain<br>Currently: ×1<br>Cost: 10 Stability</span></button>
+    <br><br><h1>Unstable Zone</h1><br>
+    <span style="color: red; font-weight: bold;">Chaos</span>: 0.000 <button onclick="GainChaos()">Gain</button>
+    <br><br><span style="color: palevioletred; font-weight: bold;">Instability</span>: 0.000
+    <br><br><button class="upgrade"><b>Unstable multiplier</b><br><span style="font-size: smaller;">Multiplies Instability gain (50% ×2, 50% ×0.5)<br>Currently: max ×1, min ×1.000<br>Cost: 10 Instability</span></button>
+    <br><br><h2>Synthesizers</h2>
+    <br><button class="upgrade"><b>Unstable multiplier stablizer</b><br><span style="font-size: smaller;">Increase Unstable multiplier ×2 probability by 10%<br>Currently: 50%<br>Cost: 100 Stability & 100 Unstability</span></button>
+    </div>
+
+    <div id="statistics-tab" class="tab">
+    <h1>Save</h1><br>
+    <button onclick="ExportSave()">Export</button> <button onclick="ImportSave()">Import</button>
+    <br><br><h1>Chaos</h1><br>
+    <span style="color: green; font-weight: bold;">Tidiness</span> Gains: 0.000
+    <br><br><span style="color: red; font-weight: bold;">Chaos</span> Gains: 0.000
+    <br><br>Chaos Probability: NaN
+    </div>
+
+    <script>
+        function showFrame(frameId, currentBtn) {
+            // 隐藏所有iframe
+            document.querySelectorAll('.tab').forEach(function(iframe) {
+                iframe.style.display = "none";
+            });
+            // 移除所有标签的激活状态
+            document.querySelectorAll('.tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            // 显示指定iframe，给当前点击的标签添加激活样式
+            document.getElementById(frameId).style.display = "block";
+            currentBtn.classList.add('active');
+            refresh();
+        }
+    </script>
+</body>
+
+<div id="copyModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Export Save</h2><br><button onclick="copyCode()">Copy</button><br><br>
+    <textarea readonly style="height: 200px; width: 500px;" id="copyModalTextarea"></textarea>
+  </div>
+</div>
+
+</html>
+
+<script src="mt19937.js"></script>
+<script src="copymodal.js"></script>
+<script>
+
+var Tidiness,Chaos,Stability,Instability,time,totalTidiGain,totalChaosGain;
+var StableMultiplierCost,UnstableMultiplierCost,StableMultiplierTotal,UnstableMultiplierMax,UnstableMultiplierMin,UnstableMultiplierCount;
+var UnstableMultiplierStablizerCost,UnstableMultiplierDoubleReq;
+
+const rng = new MT19937(Date());
+
+function showExponential(x) {
+    if (Math.abs(x) < 1.0) {
+        let val = Number(x.toExponential().split('e-')[0]);
+        let exponent = parseInt(x.toExponential().split('e-')[1]);
+        return val.toFixed(3) + 'e-' + showInt(exponent);
+    } else {
+        let val = Number(x.toExponential().split('e+')[0]);
+        let exponent = parseInt(x.toExponential().split('e+')[1]);
+        return val.toFixed(3) + 'e' + showInt(exponent);
+    }
+}
+
+function showFloat(x) {
+    if ((x < 1e3 && x >= .01) || x == 0) return x.toFixed(3);
+    return showExponential(x);
+}
+
+function showInt(x) {
+    if (x < 1e3) return x.toFixed(0);
+    return showExponential(x);
+}
+
+function ExportSave() {
+    let str = Tidiness.toString() + "," + Chaos.toString() + "," + Stability.toString()
+        + "," + Instability.toString() + "," + time.toISOString() + "," + totalTidiGain.toString() + ","
+        + totalChaosGain.toString() + "," + StableMultiplierCost.toString() + "," + UnstableMultiplierCost.toString()
+        + "," + StableMultiplierTotal.toString() + "," + UnstableMultiplierMax.toString() + ","
+        + UnstableMultiplierMin.toString() + "," + UnstableMultiplierCount.toString() + ","
+        + UnstableMultiplierDoubleReq.toString() + "," + UnstableMultiplierStablizerCost.toString();
+    letUserCopy("DirtyYKHsaveV0.0.1!" + btoa(str));
+}
+
+function ImportSave() {
+    let str = prompt('Please enter your save here,', '').split("!");
+    if (str.length != 2) {
+        alert("Invalid save. Nothing will be imported.");
+    }
+    else if (str[0] == "DirtyYKHsaveV0.0.0") {
+        let strs = atob(str[1]).split(",");
+        let len = strs.length;
+        if (len != 13) {
+            alert("Invalid save. Nothing will be imported.");
+        }
+        else if (confirm('Importing will wipe your current save. Continue?') == false) {
+            alert("Nothing is imported.");
+        }
+        else {
+            Tidiness = Number(strs[0]);
+            Chaos = Number(strs[1]);
+            Stability = Number(strs[2]);
+            Instability = Number(strs[3]);
+            time = new Date(strs[4]);
+            totalTidiGain = Number(strs[5]);
+            totalChaosGain = Number(strs[6]);
+            StableMultiplierCost = Number(strs[7]);
+            UnstableMultiplierCost = Number(strs[8]);
+            StableMultiplierTotal = Number(strs[9]);
+            UnstableMultiplierMax = Number(strs[10]);
+            UnstableMultiplierMin = Number(strs[11]);
+            UnstableMultiplierCount = Number(strs[12]);
+        }
+    }
+    else if (str[0] == "DirtyYKHsaveV0.0.1") {
+        let strs = atob(str[1]).split(",");
+        let len = strs.length;
+        if (len != 15) {
+            alert("Invalid save. Nothing will be imported.");
+        }
+        else if (confirm('Importing will wipe your current save. Continue?') == false) {
+            alert("Nothing is imported.");
+        }
+        else {
+            Tidiness = Number(strs[0]);
+            Chaos = Number(strs[1]);
+            Stability = Number(strs[2]);
+            Instability = Number(strs[3]);
+            time = new Date(strs[4]);
+            totalTidiGain = Number(strs[5]);
+            totalChaosGain = Number(strs[6]);
+            StableMultiplierCost = Number(strs[7]);
+            UnstableMultiplierCost = Number(strs[8]);
+            StableMultiplierTotal = Number(strs[9]);
+            UnstableMultiplierMax = Number(strs[10]);
+            UnstableMultiplierMin = Number(strs[11]);
+            UnstableMultiplierCount = Number(strs[12]);
+            UnstableMultiplierDoubleReq = Number(strs[13]);
+            UnstableMultiplierStablizerCost = Number(strs[14]);
+        }
+    }
+    else {
+        alert("Invalid save. Nothing will be imported.");
+    }
+}
+
+function refresh() {
+    let now = new Date();
+    let timeDiff = .001 * (now - time);
+    time = now;
+    if (Tidiness > Chaos) Stability += timeDiff * (Tidiness - Chaos) * StableMultiplierTotal;
+    else if (UnstableMultiplierDoubleReq == 10) Stability += timeDiff * (Tidiness - Chaos) * UnstableMultiplierMax;
+    else {
+        let mult = 1;
+        for (let i = 0; i < UnstableMultiplierCount; ++i)
+            if (rng.extract_number() % 10 + 1 <= UnstableMultiplierDoubleReq) mult *= 2;
+            else mult *= .5;
+        Instability += timeDiff * (Chaos - Tidiness);
+    }
+
+    let str = "<h1>Stable Zone</h1><br>\n<span style=\"color: green; font-weight: bold;\">Tidiness</span>: ";
+    str += showFloat(Tidiness) + " <button onclick=\"GainTidiness()\">Gain</button>\n";
+    str += "<br><br><span style=\"color: limegreen; font-weight: bold;\">Stability</span>: " + showFloat(Stability);
+    if (Stability < StableMultiplierCost) str += "<br><br><button class=\"upgrade\">";
+    else str += "<br><br><button class=\"okupgrade\" onclick=\"buyStableMultiplier()\">";
+    str += "<b>Stable multiplier</b><br><span style=\"font-size: smaller;\">×2 to Stability gain<br>Currently: ×";
+    str += showInt(StableMultiplierTotal) + "<br>Cost: " + showInt(StableMultiplierCost) + " Stability</span></button>";
+    str += "<br><br><h1>Unstable Zone</h1><br>\n";
+    str += "<span style=\"color: red; font-weight: bold;\">Chaos</span>: " + showFloat(Chaos);
+    str += " <button onclick=\"GainChaos()\">Gain</button>\n";
+    str += "<br><br><span style=\"color: palevioletred; font-weight: bold;\">Instability</span>: " + showFloat(Instability);
+    if (Instability < UnstableMultiplierCost) str += "<br><br><button class=\"upgrade\">";
+    else str += "<br><br><button class=\"okupgrade\" onclick=\"buyUnstableMultiplier()\">";
+    str += "<b>Unstable multiplier</b><br><span style=\"font-size: smaller;\">";
+    if (UnstableMultiplierDoubleReq == 10) {
+        str += "Multiplies Instability gain (always ×2)<br>Currently: ×";
+        str += showInt(UnstableMultiplierMax) + "<br>Cost: " + showInt(UnstableMultiplierCost) + " Instability</span></button>";
+    } else {
+        str += "Multiplies Instability gain (" + UnstableMultiplierDoubleReq.toFixed(0) + "0% ×2, ";
+        str += (10 - UnstableMultiplierDoubleReq).toFixed(0) + "0% ×0.5)<br>Currently: max ×";
+        str += showInt(UnstableMultiplierMax) + ", min ×" + showFloat(UnstableMultiplierMin) + "<br>Cost: " + showInt(UnstableMultiplierCost) + " Instability</span></button>";
+    }
+    str += "<br><br><h2>Synthesizers</h2>";
+    if (UnstableMultiplierStablizerCost == 1e12) str += "<br><button class=\"boughtupgrade\">";
+    else if (Stability >= UnstableMultiplierStablizerCost && Instability >= UnstableMultiplierStablizerCost)
+        str += "<br><button class=\"okupgrade\" onclick=\"buyUnstableMultiplierStablizer()\">";
+    else str += "<br><button class=\"upgrade\">";
+    str += "<b>Unstable multiplier stablizer</b><br><span style=\"font-size: smaller;\">Increase Unstable multiplier ×2 probability by 10%<br>";
+    str += "Currently: " + UnstableMultiplierDoubleReq.toFixed(0) + "0%<br>";
+    if (UnstableMultiplierStablizerCost == 1e12) str += "Cannot purchase (Maxxed)</span></button>";
+    else {
+        str += "Cost: " + showInt(UnstableMultiplierStablizerCost) + " Stability & ";
+        str += showInt(UnstableMultiplierStablizerCost) + " Unstability</span></button>";
+    }
+    document.getElementById('chaos-tab').innerHTML = str;
+    
+    str = "<h1>Save</h1><br>";
+    str += "<button onclick=\"ExportSave()\">Export</button> <button onclick=\"ImportSave()\">Import</button>";
+    str += "\n<br><br><h1>Chaos</h1><br>\n<span style=\"color: green; font-weight: bold;\">Tidiness</span> Gains: ";
+    str += showInt(totalTidiGain);
+    str += "<br><br><span style=\"color: red; font-weight: bold;\">Chaos</span> Gains: " + showInt(totalChaosGain);
+    str += "<br><br>Chaos Probability: ";
+    if (totalChaosGain == 0 && totalTidiGain == 0) str += "NaN";
+    else str += (totalChaosGain * 100. / (totalChaosGain + totalTidiGain)).toFixed(2) + "%";
+    document.getElementById('statistics-tab').innerHTML = str;
+}
+
+function init() {
+    Tidiness = Chaos = 0.000;
+    Stability = Instability = 0.000;
+    time = new Date();
+    totalTidiGain = totalChaosGain = 0;
+    StableMultiplierCost = UnstableMultiplierCost = 10;
+    UnstableMultiplierCount = 0;
+    StableMultiplierTotal = UnstableMultiplierMax = UnstableMultiplierMin = 1;
+    UnstableMultiplierStablizerCost = 100;
+    UnstableMultiplierDoubleReq = 5;
+    setInterval(refresh, 500);
+}
+
+function GainTidiness() {
+    Tidiness += 1.000;
+    totalTidiGain += 1;
+    refresh();
+}
+
+function GainChaos() {
+    Chaos += 1.000;
+    totalChaosGain += 1;
+    refresh();
+}
+
+function buyStableMultiplier() {
+    Stability -= StableMultiplierCost;
+    StableMultiplierTotal *= 2;
+    StableMultiplierCost *= 10;
+    UnstableMultiplierCount += 1;
+    refresh();
+}
+
+function buyUnstableMultiplier() {
+    Instability -= UnstableMultiplierCost;
+    UnstableMultiplierMax *= 2;
+    UnstableMultiplierMin *= .5;
+    UnstableMultiplierCost *= 10;
+    refresh();
+}
+
+function buyUnstableMultiplierStablizer() {
+    Stability -= UnstableMultiplierStablizerCost;
+    Instability -= UnstableMultiplierStablizerCost;
+    UnstableMultiplierDoubleReq += 1;
+    UnstableMultiplierStablizerCost *= 100;
+    refresh();
+}
+
+</script>
