@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YKH Chaos incremental v0.0.1</title>
+<title>YKH Chaos incremental v0.0.2</title>
 <link rel="stylesheet" href="copymodal.css">
 <style>
     @font-face {
@@ -178,8 +178,16 @@
 <div id="copyModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-    <h2>Export Save</h2><br><button onclick="copyCode()">Copy</button><br><br>
-    <textarea readonly style="height: 200px; width: 500px;" id="copyModalTextarea"></textarea>
+    <h2>Export Save</h2><br><button id="copyButton">Copy to clipboard</button><br><br>
+    <textarea readonly style="height: 150px; width: 250px;" id="copyModalTextarea"></textarea>
+  </div>
+</div>
+
+<div id="importModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Import Save</h2><br>Please paste your save below: <button onclick="ImportSaveFile()">Confirm & import</button><br><br>
+    <textarea style="height: 150px; width: 250px;" id="importTextarea"></textarea>
   </div>
 </div>
 
@@ -224,11 +232,16 @@ function ExportSave() {
         + "," + StableMultiplierTotal.toString() + "," + UnstableMultiplierMax.toString() + ","
         + UnstableMultiplierMin.toString() + "," + UnstableMultiplierCount.toString() + ","
         + UnstableMultiplierDoubleReq.toString() + "," + UnstableMultiplierStablizerCost.toString();
-    letUserCopy("DirtyYKHsaveV0.0.1!" + btoa(str));
+    letUserCopy("DirtyYKHsaveV0.0.2!" + btoa(str));
 }
 
 function ImportSave() {
-    let str = prompt('Please enter your save here,', '').split("!");
+  document.getElementById("importModal").style.display = "block";
+  document.getElementById("importTextarea").innerHTML = "";
+}
+
+function ImportSaveFile() {
+    let str = document.getElementById("importTextarea").value.split("!");
     if (str.length != 2) {
         alert("Invalid save. Nothing will be imported.");
     }
@@ -258,6 +271,33 @@ function ImportSave() {
         }
     }
     else if (str[0] == "DirtyYKHsaveV0.0.1") {
+        let strs = atob(str[1]).split(",");
+        let len = strs.length;
+        if (len != 15) {
+            alert("Invalid save. Nothing will be imported.");
+        }
+        else if (confirm('Importing will wipe your current save. Continue?') == false) {
+            alert("Nothing is imported.");
+        }
+        else {
+            Tidiness = Number(strs[0]);
+            Chaos = Number(strs[1]);
+            Stability = Number(strs[2]);
+            Instability = Number(strs[3]);
+            time = new Date(strs[4]);
+            totalTidiGain = Number(strs[5]);
+            totalChaosGain = Number(strs[6]);
+            StableMultiplierCost = Number(strs[7]);
+            UnstableMultiplierCost = Number(strs[8]);
+            StableMultiplierTotal = Number(strs[9]);
+            UnstableMultiplierMax = Number(strs[10]);
+            UnstableMultiplierMin = Number(strs[11]);
+            UnstableMultiplierCount = Number(strs[12]);
+            UnstableMultiplierDoubleReq = Number(strs[13]);
+            UnstableMultiplierStablizerCost = Number(strs[14]);
+        }
+    }
+    else if (str[0] == "DirtyYKHsaveV0.0.2") {
         let strs = atob(str[1]).split(",");
         let len = strs.length;
         if (len != 15) {
