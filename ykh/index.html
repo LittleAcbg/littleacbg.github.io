@@ -3,25 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YKH Chaos incremental v0.0.2</title>
+<title>YKH Chaos incremental v0.0.3</title>
 <link rel="stylesheet" href="copymodal.css">
 <style>
     @font-face {
     font-family: 'Consolas';
-    src: url('font/Consolas W99 Regular.woff2') format('woff2'), /* 提供WOFF2格式 */
-         url('font/Consolas W99 Regular.woff') format('woff');   /* 提供WOFF格式 */
+    src: url('font/Consolas.woff2') format('woff2'),
+         url('font/Consolas.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     }
     @font-face {
     font-family: 'Consolas';
-    src: url('font/Consolas W99 Bold.woff2') format('woff2'), /* 提供WOFF2格式 */
-         url('font/Consolas W99 Bold.woff') format('woff');   /* 提供WOFF格式 */
+    src: url('font/Consolas Bold.woff2') format('woff2'),
+         url('font/Consolas Bold.woff') format('woff');
     font-weight: bold;
     font-style: normal;
     }
+    @font-face {
+    font-family: 'Consolas';
+    src: url('font/Consolas Italic.woff2') format('woff2'),
+         url('font/Consolas Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    }
+    @font-face {
+    font-family: 'Consolas';
+    src: url('font/Consolas Bold Italic.woff2') format('woff2'),
+         url('font/Consolas Bold Italic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    }
     body {
         font-family: 'Consolas';
+        background-color: #f0f5fa;
+        padding: 20px;
     }
     button {
         font-family: 'Consolas';
@@ -35,10 +51,6 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-    }
-    body {
-        background-color: #f0f5fa;
-        padding: 20px;
     }
     .tab-bar {
         display: flex;
@@ -123,9 +135,18 @@
     .boughtupgrade:hover {
         background-color: green;
     }
+    .sacII {
+        padding: 4px;
+        border-radius: 3px;
+        border: 1px solid #909000;
+        background-color: white;
+        color: black;
+    }
+    .sacII:hover {
+        background-color: #e0e000;
+    }
 </style>
 </head>
-
 
 <body onload="init()">
     <div class="tab-bar">
@@ -143,7 +164,18 @@
     <br><br><span style="color: palevioletred; font-weight: bold;">Instability</span>: 0.000
     <br><br><button class="upgrade"><b>Unstable multiplier</b><br><span style="font-size: smaller;">Multiplies Instability gain (50% ×2, 50% ×0.5)<br>Currently: max ×1, min ×1.000<br>Cost: 10 Instability</span></button>
     <br><br><h2>Synthesizers</h2>
-    <br><button class="upgrade"><b>Unstable multiplier stablizer</b><br><span style="font-size: smaller;">Increase Unstable multiplier ×2 probability by 10%<br>Currently: 50%<br>Cost: 100 Stability & 100 Unstability</span></button>
+    <br><button class="upgrade"><b>Unstable multiplier stablizer</b><br><span style="font-size: smaller;">Increase Unstable multiplier ×2 probability by 10%<br>Currently: 50%<br>Cost: 100 Stability & 100 Instability</span></button>
+    <br><br><button class="upgrade"><b>Stable multiplier synthesizer</b><br><span style="font-size: smaller;">Unstable multipliers apply to Stability at a reduced rate<br>Currently: ×1.000 per Unstable multiplier level (Next ×1.100)<br>Cost: 100 Stability & 100 Instability</span></button>
+    <br><br><button class="upgrade"><b>Unstable multiplier synthesizer</b><br><span style="font-size: smaller;">Stable multipliers apply to Instability at a reduced rate<br>Currently: ×1.000 per Stable multiplier level (Next ×1.100)<br>Cost: 100 Stability & 100 Instability</span></button>
+    </div>
+
+    <div id="sacrifice-tab" class="tab">
+    <h1>Tidiness</h1><br>
+    <button class="upgrade"><b>Tidiness Sacrifice I</b><br><span style="font-size: smaller;">Sacrifice your Tidiness for a Tidiness multiplier. (1+0.05x)<br>Currently: ×1.000<br>Locked (Needs 5 Tidiness)</span></button>
+    <br><br><button class="upgrade"><b>Tidiness Sacrifice II</b><br><span style="font-size: smaller;">Sacrifice your Tidiness but get a debuff on Instability, which resets on next Chaos Sacrifice, only available when Tidiness is greater than last sacrifice I. (×0.98×0.995^Tidiness)<br>Currently: ×1.000<br>Locked (Needs 1 Tidiness)</span></button>
+    <br><br><h1>Chaos</h1><br>
+    <button class="upgrade"><b>Chaos Sacrifice I</b><br><span style="font-size: smaller;">Sacrifice your Chaos for a Chaos multiplier. (1+0.05x)<br>Currently: ×1.000<br>Locked (Needs 5 Chaos)</span></button>
+    <br><br><button class="upgrade"><b>Chaos Sacrifice II</b><br><span style="font-size: smaller;">Sacrifice your Chaos but get a debuff on Stability, which resets on next Tidiness Sacrifice, only available when Chaos is greater than last sacrifice I. (×0.98×0.995^Chaos)<br>Currently: ×1.000<br>Locked (Needs 1 Chaos)</span></button>
     </div>
 
     <div id="statistics-tab" class="tab">
@@ -155,7 +187,7 @@
     <br><br>Chaos Probability: NaN
     </div>
 
-    <div>Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
+    <div style="font-size: x-small">Fonts made from <a href="http://www.onlinewebfonts.com">Web Fonts</a> is licensed by CC BY 4.0</div>
 
     <script>
         function showFrame(frameId, currentBtn) {
@@ -174,7 +206,6 @@
         }
     </script>
 </body>
-
 <div id="copyModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
@@ -182,7 +213,6 @@
     <textarea readonly style="height: 150px; width: 250px;" id="copyModalTextarea"></textarea>
   </div>
 </div>
-
 <div id="importModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
@@ -190,7 +220,6 @@
     <textarea style="height: 150px; width: 250px;" id="importTextarea"></textarea>
   </div>
 </div>
-
 </html>
 
 <script src="mt19937.js"></script>
@@ -198,8 +227,13 @@
 <script>
 
 var Tidiness,Chaos,Stability,Instability,time,totalTidiGain,totalChaosGain;
-var StableMultiplierCost,UnstableMultiplierCost,StableMultiplierTotal,UnstableMultiplierMax,UnstableMultiplierMin,UnstableMultiplierCount;
+var StableMultiplierCost,UnstableMultiplierCost,StableMultiplierTotal;
+var UnstableMultiplierMax,UnstableMultiplierMin,UnstableMultiplierCount;
 var UnstableMultiplierStablizerCost,UnstableMultiplierDoubleReq;
+var StableMultiplierSynthesizerCost,StableMultiplierSynthesizerBonus,StableMultiplierSynthesizerTotal;
+var UnstableMultiplierSynthesizerCost,UnstableMultiplierSynthesizerBonus,UnstableMultiplierSynthesizerTotal;
+var StableMultiplierCount,SacrificeUnlocked;
+var TidiSacIreq,ChaosSacIreq,TidiSacIbonus,ChaosSacIbonus,TidiSacIIdebuff,ChaosSacIIdebuff;
 
 const rng = new MT19937(Date());
 
@@ -214,32 +248,33 @@ function showExponential(x) {
         return val.toFixed(3) + 'e' + showInt(exponent);
     }
 }
-
 function showFloat(x) {
     if ((x < 1e3 && x >= .01) || x == 0) return x.toFixed(3);
     return showExponential(x);
 }
-
 function showInt(x) {
     if (x < 1e3) return x.toFixed(0);
     return showExponential(x);
 }
-
 function ExportSave() {
     let str = Tidiness.toString() + "," + Chaos.toString() + "," + Stability.toString()
         + "," + Instability.toString() + "," + time.toISOString() + "," + totalTidiGain.toString() + ","
         + totalChaosGain.toString() + "," + StableMultiplierCost.toString() + "," + UnstableMultiplierCost.toString()
         + "," + StableMultiplierTotal.toString() + "," + UnstableMultiplierMax.toString() + ","
         + UnstableMultiplierMin.toString() + "," + UnstableMultiplierCount.toString() + ","
-        + UnstableMultiplierDoubleReq.toString() + "," + UnstableMultiplierStablizerCost.toString();
-    letUserCopy("DirtyYKHsaveV0.0.2!" + btoa(str));
+        + UnstableMultiplierDoubleReq.toString() + "," + UnstableMultiplierStablizerCost.toString() + ","
+        + StableMultiplierSynthesizerCost.toString() + "," + StableMultiplierSynthesizerBonus.toString()
+        + "," + StableMultiplierSynthesizerTotal.toString() + "," + UnstableMultiplierSynthesizerCost.toString()
+        + "," + UnstableMultiplierSynthesizerBonus.toString() + "," + UnstableMultiplierSynthesizerTotal.toString()
+        + "," + StableMultiplierCount.toString() + "," + SacrificeUnlocked.toString() + ","
+        + TidiSacIreq.toString() + "," + ChaosSacIreq.toString() + "," + TidiSacIbonus.toString() + ","
+        + ChaosSacIbonus.toString() + "," + TidiSacIIdebuff.toString() + "," + ChaosSacIIdebuff.toString();
+    letUserCopy("DirtyYKHsaveV0.0.3!" + btoa(str));
 }
-
 function ImportSave() {
   document.getElementById("importModal").style.display = "block";
-  document.getElementById("importTextarea").innerHTML = "";
+  document.getElementById("importTextarea").value = "";
 }
-
 function ImportSaveFile() {
     let str = document.getElementById("importTextarea").value.split("!");
     if (str.length != 2) {
@@ -268,6 +303,8 @@ function ImportSaveFile() {
             UnstableMultiplierMax = Number(strs[10]);
             UnstableMultiplierMin = Number(strs[11]);
             UnstableMultiplierCount = Number(strs[12]);
+            document.getElementById("importModal").style.display = "none";
+            refresh();
         }
     }
     else if (str[0] == "DirtyYKHsaveV0.0.1") {
@@ -295,6 +332,8 @@ function ImportSaveFile() {
             UnstableMultiplierCount = Number(strs[12]);
             UnstableMultiplierDoubleReq = Number(strs[13]);
             UnstableMultiplierStablizerCost = Number(strs[14]);
+            document.getElementById("importModal").style.display = "none";
+            refresh();
         }
     }
     else if (str[0] == "DirtyYKHsaveV0.0.2") {
@@ -322,25 +361,69 @@ function ImportSaveFile() {
             UnstableMultiplierCount = Number(strs[12]);
             UnstableMultiplierDoubleReq = Number(strs[13]);
             UnstableMultiplierStablizerCost = Number(strs[14]);
+            document.getElementById("importModal").style.display = "none";
+            refresh();
+        }
+    }
+    else if (str[0] == "DirtyYKHsaveV0.0.3") {
+        let strs = atob(str[1]).split(",");
+        if (strs.length != 29) {
+            alert("Invalid save. Nothing will be imported.");
+        }
+        else if (confirm('Importing will wipe your current save. Continue?') == false) {
+            alert("Nothing is imported.");
+        }
+        else {
+            Tidiness = Number(strs[0]);
+            Chaos = Number(strs[1]);
+            Stability = Number(strs[2]);
+            Instability = Number(strs[3]);
+            time = new Date(strs[4]);
+            totalTidiGain = Number(strs[5]);
+            totalChaosGain = Number(strs[6]);
+            StableMultiplierCost = Number(strs[7]);
+            UnstableMultiplierCost = Number(strs[8]);
+            StableMultiplierTotal = Number(strs[9]);
+            UnstableMultiplierMax = Number(strs[10]);
+            UnstableMultiplierMin = Number(strs[11]);
+            UnstableMultiplierCount = Number(strs[12]);
+            UnstableMultiplierDoubleReq = Number(strs[13]);
+            UnstableMultiplierStablizerCost = Number(strs[14]);
+            StableMultiplierSynthesizerCost = Number(strs[15]);
+            StableMultiplierSynthesizerBonus = Number(strs[16]);
+            StableMultiplierSynthesizerTotal = Number(strs[17]);
+            UnstableMultiplierSynthesizerCost = Number(strs[18]);
+            UnstableMultiplierSynthesizerBonus = Number(strs[19]);
+            UnstableMultiplierSynthesizerTotal = Number(strs[20]);
+            StableMultiplierCount = Number(strs[21]);
+            SacrificeUnlocked = strs[22] == "true";
+            if (SacrificeUnlocked) document.getElementsByClassName("tab-bar")[0].innerHTML = "<button class=\"tab-btn\" onclick=\"showFrame('chaos-tab', this)\">Chaos</button>&ensp;<button class=\"tab-btn\" onclick=\"showFrame('sacrifice-tab', this)\">Sacrifice</button>&ensp;<button class=\"tab-btn active\" onclick=\"showFrame('statistics-tab', this)\">Statistics</button>";
+            TidiSacIreq = strs[23];
+            ChaosSacIreq = strs[24];
+            TidiSacIbonus = strs[25];
+            ChaosSacIbonus = strs[26];
+            TidiSacIIdebuff = strs[27];
+            ChaosSacIIdebuff = strs[28];
+            document.getElementById("importModal").style.display = "none";
+            refresh();
         }
     }
     else {
         alert("Invalid save. Nothing will be imported.");
     }
 }
-
 function refresh() {
     let now = new Date();
     let timeDiff = .001 * (now - time);
     time = now;
-    if (Tidiness > Chaos) Stability += timeDiff * (Tidiness - Chaos) * StableMultiplierTotal;
-    else if (UnstableMultiplierDoubleReq == 10) Stability += timeDiff * (Tidiness - Chaos) * UnstableMultiplierMax;
+    if (Tidiness > Chaos) Stability += timeDiff * (Tidiness - Chaos) * StableMultiplierTotal * ChaosSacIIdebuff;
+    else if (UnstableMultiplierDoubleReq == 10) Instability += timeDiff * (Tidiness - Chaos) * UnstableMultiplierMax * TidiSacIIdebuff;
     else {
         let mult = 1;
         for (let i = 0; i < UnstableMultiplierCount; ++i)
             if (rng.extract_number() % 10 + 1 <= UnstableMultiplierDoubleReq) mult *= 2;
             else mult *= .5;
-        Instability += timeDiff * (Chaos - Tidiness);
+        Instability += timeDiff * (Chaos - Tidiness) * TidiSacIIdebuff;
     }
 
     let str = "<h1>Stable Zone</h1><br>\n<span style=\"color: green; font-weight: bold;\">Tidiness</span>: ";
@@ -375,9 +458,62 @@ function refresh() {
     if (UnstableMultiplierStablizerCost == 1e12) str += "Cannot purchase (Maxxed)</span></button>";
     else {
         str += "Cost: " + showInt(UnstableMultiplierStablizerCost) + " Stability & ";
-        str += showInt(UnstableMultiplierStablizerCost) + " Unstability</span></button>";
+        str += showInt(UnstableMultiplierStablizerCost) + " Instability</span></button>";
+    }
+    if (StableMultiplierSynthesizerCost == 1e22) str += "<br><br><button class=\"boughtupgrade\">";
+    else if (Stability >= StableMultiplierSynthesizerCost && Instability >= StableMultiplierSynthesizerCost)
+        str += "<br><br><button class=\"okupgrade\" onclick=\"buyStableMultiplierSynthesizer()\">";
+    else str += "<br><br><button class=\"upgrade\">";
+    str += "<b>Stable multiplier synthesizer</b><br><span style=\"font-size: smaller;\">Unstable multipliers apply to Stability at a reduced rate<br>";
+    str += "Currently: ×" + showFloat(StableMultiplierSynthesizerBonus) + " per Unstable multiplier level";
+    if (StableMultiplierSynthesizerCost == 1e22) str += "<br>Cannot purchase (Maxxed)</span></button>";
+    else {
+        str += " (Next ×" + showFloat(StableMultiplierSynthesizerBonus + .1) + ")<br>Cost: " + showInt(StableMultiplierSynthesizerCost)
+        str += " Stability & " + showInt(StableMultiplierSynthesizerCost) + " Instability</span></button>";
+    }
+    if (UnstableMultiplierSynthesizerCost == 1e22) str += "<br><br><button class=\"boughtupgrade\">";
+    else if (Stability >= UnstableMultiplierSynthesizerCost && Instability >= UnstableMultiplierSynthesizerCost)
+        str += "<br><br><button class=\"okupgrade\" onclick=\"buyUnstableMultiplierSynthesizer()\">";
+    else str += "<br><br><button class=\"upgrade\">";
+    str += "<b>Unstable multiplier synthesizer</b><br><span style=\"font-size: smaller;\">Stable multipliers apply to Instability at a reduced rate<br>Currently: ×";
+    str += showFloat(UnstableMultiplierSynthesizerBonus) + " per Stable multiplier level";
+    if (UnstableMultiplierSynthesizerCost == 1e22) str += "<br>Cannot purchase (Maxxed)</span></button>";
+    else {
+        str += " (Next ×" + showFloat(UnstableMultiplierSynthesizerBonus + .1) + ")<br>Cost: ";
+        str += showInt(UnstableMultiplierSynthesizerCost) + " Stability & " + showInt(UnstableMultiplierSynthesizerCost) + " Instability</span></button>";
     }
     document.getElementById('chaos-tab').innerHTML = str;
+
+    str = "<h1>Tidiness</h1><br>";
+    if (Tidiness >= TidiSacIreq) str += "<button class=\"okupgrade\" onclick=\"TidiSacI()\">";
+    else str += "<button class=\"upgrade\">";
+    str += "<b>Tidiness Sacrifice I</b><br><span style=\"font-size: smaller;\">Sacrifice your Tidiness for a Tidiness multiplier, only available when Tidiness is greater than last sacrifice I. (1+0.05x)<br>Currently: ×";
+    str += showFloat(TidiSacIbonus) + "<br>";
+    if (Tidiness >= TidiSacIreq) str += "Next: ×" + showFloat(1 + .05 * Tidiness);
+    else str += "Locked (Needs " + showInt(TidiSacIreq) + " Tidiness)";
+    str += "</span></button><br><br>";
+    if (Tidiness > 0) str += "<button class=\"sacII\" onclick=\"TidiSacII()\">";
+    else str += "<button class=\"upgrade\">";
+    str += "<b>Tidiness Sacrifice II</b><br><span style=\"font-size: smaller;\">Sacrifice your Tidiness but get a debuff on Instability, which resets on next Chaos Sacrifice. (×0.98×0.995^Tidiness)<br>Currently: ×";
+    str += showFloat(TidiSacIIdebuff) + "<br>";
+    if (Tidiness > 0) str += "Debuff ahead: additional ×" + showFloat(.98 * Math.pow(.995, Tidiness));
+    else str += "Locked (Needs 1 Tidiness)";
+    str += "</span></button><br><br><h1>Chaos</h1><br>";
+    if (Chaos >= ChaosSacIreq) str += "<button class=\"okupgrade\" onclick=\"ChaosSacI()\">";
+    else str += "<button class=\"upgrade\">";
+    str += "<b>Chaos Sacrifice I</b><br><span style=\"font-size: smaller;\">Sacrifice your Chaos for a Chaos multiplier, only available when Chaos is greater than last sacrifice I. (1+0.05x)<br>Currently: ×";
+    str += showFloat(ChaosSacIbonus) + "<br>";
+    if (Chaos >= ChaosSacIreq) str += "Next: ×" + showFloat(1 + .05 * Chaos);
+    else str += "Locked (Needs " + showInt(ChaosSacIreq) + " Chaos)";
+    str += "</span></button><br><br>";
+    if (Chaos > 0) str += "<button class=\"sacII\" onclick=\"ChaosSacII()\">";
+    else str += "<button class=\"upgrade\">";
+    str += "<b>Chaos Sacrifice II</b><br><span style=\"font-size: smaller;\">Sacrifice your Chaos but get a debuff on Stability, which resets on next Tidiness Sacrifice. (×0.98×0.995^Chaos)<br>Currently: ×";
+    str += showFloat(ChaosSacIIdebuff) + "<br>";
+    if (Chaos > 0) str += "Debuff ahead: additional ×" + showFloat(.98 * Math.pow(.995, Chaos));
+    else str += "Locked (Needs 1 Chaos)";
+    str += "</span></button>";
+    document.getElementById('sacrifice-tab').innerHTML = str;
     
     str = "<h1>Save</h1><br>";
     str += "<button onclick=\"ExportSave()\">Export</button> <button onclick=\"ImportSave()\">Import</button>";
@@ -389,48 +525,53 @@ function refresh() {
     else str += (totalChaosGain * 100. / (totalChaosGain + totalTidiGain)).toFixed(2) + "%";
     document.getElementById('statistics-tab').innerHTML = str;
 }
-
 function init() {
     Tidiness = Chaos = 0.000;
     Stability = Instability = 0.000;
     time = new Date();
     totalTidiGain = totalChaosGain = 0;
     StableMultiplierCost = UnstableMultiplierCost = 10;
-    UnstableMultiplierCount = 0;
+    UnstableMultiplierCount = StableMultiplierCount = 0;
     StableMultiplierTotal = UnstableMultiplierMax = UnstableMultiplierMin = 1;
     UnstableMultiplierStablizerCost = 100;
     UnstableMultiplierDoubleReq = 5;
+    StableMultiplierSynthesizerCost = UnstableMultiplierSynthesizerCost = 100;
+    StableMultiplierSynthesizerBonus = StableMultiplierSynthesizerTotal = 1;
+    UnstableMultiplierSynthesizerBonus = UnstableMultiplierSynthesizerTotal = 1;
+    SacrificeUnlocked = false;
+    TidiSacIreq = ChaosSacIreq = 5;
+    TidiSacIbonus = ChaosSacIbonus = TidiSacIIdebuff = ChaosSacIIdebuff = 1;
     setInterval(refresh, 500);
 }
-
 function GainTidiness() {
-    Tidiness += 1.000;
+    Tidiness += TidiSacIbonus;
+    if (Tidiness >= 5) unlockSacrifice();
     totalTidiGain += 1;
     refresh();
 }
-
 function GainChaos() {
-    Chaos += 1.000;
+    Chaos += ChaosSacIbonus;
+    if (Chaos >= 5) unlockSacrifice();
     totalChaosGain += 1;
     refresh();
 }
-
 function buyStableMultiplier() {
     Stability -= StableMultiplierCost;
     StableMultiplierTotal *= 2;
     StableMultiplierCost *= 10;
-    UnstableMultiplierCount += 1;
+    StableMultiplierCount += 1;
+    UnstableMultiplierSynthesizerTotal *= UnstableMultiplierSynthesizerBonus;
     refresh();
 }
-
 function buyUnstableMultiplier() {
     Instability -= UnstableMultiplierCost;
     UnstableMultiplierMax *= 2;
     UnstableMultiplierMin *= .5;
     UnstableMultiplierCost *= 10;
+    UnstableMultiplierCount += 1;
+    StableMultiplierSynthesizerTotal *= StableMultiplierSynthesizerBonus;
     refresh();
 }
-
 function buyUnstableMultiplierStablizer() {
     Stability -= UnstableMultiplierStablizerCost;
     Instability -= UnstableMultiplierStablizerCost;
@@ -438,5 +579,56 @@ function buyUnstableMultiplierStablizer() {
     UnstableMultiplierStablizerCost *= 100;
     refresh();
 }
-
+function buyStableMultiplierSynthesizer() {
+    Stability -= StableMultiplierSynthesizerCost;
+    Instability -= StableMultiplierSynthesizerCost;
+    StableMultiplierSynthesizerBonus += .1;
+    StableMultiplierSynthesizerTotal = 1;
+    for (let i = 0; i < UnstableMultiplierCount; ++i) StableMultiplierSynthesizerTotal *= StableMultiplierSynthesizerBonus;
+    StableMultiplierSynthesizerCost *= 100;
+    refresh();
+}
+function buyUnstableMultiplierSynthesizer() {
+    Stability -= UnstableMultiplierSynthesizerCost;
+    Instability -= UnstableMultiplierSynthesizerCost;
+    UnstableMultiplierSynthesizerBonus += .1;
+    UnstableMultiplierSynthesizerTotal = 1;
+    for (let i = 0; i < StableMultiplierCount; ++i) UnstableMultiplierSynthesizerTotal *= UnstableMultiplierSynthesizerBonus;
+    UnstableMultiplierSynthesizerCost *= 100;
+    refresh();
+}
+function unlockSacrifice() {
+    if (SacrificeUnlocked) return;
+    refresh();
+    SacrificeUnlocked = true;
+    document.getElementsByClassName("tab-bar")[0].innerHTML = "<button class=\"tab-btn\" onclick=\"showFrame('chaos-tab', this)\">Chaos</button>&ensp;<button class=\"tab-btn active\" onclick=\"showFrame('sacrifice-tab', this)\" id=\"sacrifice-tab-button\">Sacrifice</button>&ensp;<button class=\"tab-btn\" onclick=\"showFrame('statistics-tab', this)\">Statistics</button>";
+    showFrame('sacrifice-tab', document.getElementById('sacrifice-tab-button'));
+    alert("You have unlocked Sacrifice. (Sacrifice unlocks upon reaching either 5 Tidiness or 5 Chaos)");
+}
+function TidiSacI() {
+    ChaosSacIIdebuff = 1;
+    TidiSacIbonus = 1 + .05 * Tidiness;
+    TidiSacIreq = Tidiness + 1;
+    Tidiness = 0;
+    refresh();
+}
+function TidiSacII() {
+    ChaosSacIIdebuff = 1;
+    TidiSacIIdebuff *= .98 * Math.pow(.995, Tidiness);
+    Tidiness = 0;
+    refresh();
+}
+function ChaosSacI() {
+    TidiSacIIdebuff = 1;
+    ChaosSacIbonus = 1 + .05 * Chaos;
+    ChaosSacIreq = Chaos + 1;
+    Chaos = 0;
+    refresh();
+}
+function ChaosSacII() {
+    TidiSacIIdebuff = 1;
+    ChaosSacIIdebuff *= .98 * Math.pow(.995, Chaos);
+    Chaos = 0;
+    refresh();
+}
 </script>
